@@ -338,3 +338,4 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+/Mirea.Antiplagiat.Bot/appsettings.secret.json
