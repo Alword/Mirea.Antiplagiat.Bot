@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Mirea.Antiplagiat.Bot.Abstractions;
 using Mirea.Antiplagiat.Bot.Commands;
 using Mirea.Antiplagiat.Bot.Controllers;
+using Mirea.Antiplagiat.Bot.Data;
 using Mirea.Antiplagiat.Bot.Models;
 using Mirea.Antiplagiat.Bot.Models.Commands;
 using System;
@@ -20,11 +21,7 @@ namespace Mirea.Antiplagiat.Bot
     {
 
         private readonly List<IBackgroundWorker> workers;
-
-        private readonly ILogger<App> logger;
         private readonly IVkApi bot;
-
-        private readonly CheckDocument checkDocument;
         private readonly List<BaseCommand> commands;
         private readonly ulong groupId;
 
@@ -32,9 +29,9 @@ namespace Mirea.Antiplagiat.Bot
             IVkApi bot,
             IConfigurationRoot configuration,
             IAntiplagiatService antiplagiatService,
+            MireaAntiplagiatDataContext context,
             SendReportCommand sendReportCommand)
         {
-            this.logger = logger;
             this.bot = bot;
             this.groupId = configuration.GetSection("ConnectionStrings").GetValue<ulong>("GroupId");
 
@@ -42,12 +39,13 @@ namespace Mirea.Antiplagiat.Bot
             {
                 sendReportCommand
             };
-
+            context.PathUserId.Add(@"C:\Users\Artyom\source\repos\Mirea.Antiplagiat.Bot\Mirea.Antiplagiat.Bot\bin\Debug\netcoreapp3.1\docs\63063164 dbf51013 ИКБО-02-16 Слепушко ПДП.pdf", 63063164L);
             this.commands = new List<BaseCommand>
             {
-                new CheckDocument(antiplagiatService),
+                new CheckDocument(antiplagiatService,context),
                 new StartCommand()
             };
+
         }
         internal Task Run()
         {

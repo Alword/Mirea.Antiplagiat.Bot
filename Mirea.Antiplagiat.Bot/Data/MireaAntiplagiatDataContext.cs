@@ -7,10 +7,10 @@ namespace Mirea.Antiplagiat.Bot.Data
 {
     public class MireaAntiplagiatDataContext
     {
-        public Dictionary<string, int> PathUserId { get; }
+        public Dictionary<string, long> PathUserId { get; }
         public MireaAntiplagiatDataContext()
         {
-            this.PathUserId = new Dictionary<string, int>();
+            this.PathUserId = new Dictionary<string, long>();
         }
     }
 }

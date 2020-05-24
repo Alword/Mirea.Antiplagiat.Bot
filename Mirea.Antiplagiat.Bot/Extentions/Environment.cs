@@ -8,12 +8,21 @@ namespace Mirea.Antiplagiat.Bot.Extentions
 {
     public static class Folders
     {
-        public static string Docs()
+        private static string Folder(string folder)
         {
-            string path = Path.Combine(Environment.CurrentDirectory, "docs");
+            string path = Path.Combine(Environment.CurrentDirectory, folder);
             if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
             return path;
+        }
+        public static string Docs()
+        {
+            return Folder("docs");
+        }
+
+        public static string Repots()
+        {
+            return Folder("reports");
         }
     }
 }

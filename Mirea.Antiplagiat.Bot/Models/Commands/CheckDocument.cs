@@ -1,5 +1,6 @@
 ﻿using Mirea.Antiplagiat.Bot.Commands;
 using Mirea.Antiplagiat.Bot.Controllers;
+using Mirea.Antiplagiat.Bot.Data;
 using Mirea.Antiplagiat.Bot.Extentions;
 using System;
 using System.Collections.Generic;
@@ -22,10 +23,11 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
         public override string Name => throw new NotImplementedException();
 
         private readonly IAntiplagiatService antiplagiatService;
-        private Dictionary<string, long> DocumentUser;
-        public CheckDocument(IAntiplagiatService antiplagiatService)
+        private readonly MireaAntiplagiatDataContext context;
+        public CheckDocument(IAntiplagiatService antiplagiatService, MireaAntiplagiatDataContext context)
         {
             this.antiplagiatService = antiplagiatService;
+            this.context = context;
         }
         public override bool Execute(GroupUpdate update, IVkApi bot)
         {
@@ -38,9 +40,11 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
 
                     using (var client = new WebClient())
                     {
-                        string path = Path.Combine(Folders.Docs(), $"{update.MessageNew.Message.FromId} {document.Title}");
+                        string salt = Guid.NewGuid().ToString().Substring(0, 8);
+                        string path = Path.Combine(Folders.Docs(), $"{update.MessageNew.Message.FromId} {salt} {document.Title}");
                         client.DownloadFile(document.Uri, path);
                         update.ReplyMessageNew(bot, AppData.Strings.DocumentSaved);
+                        context.PathUserId.Add(path, (long)update.MessageNew.Message.FromId);
                         antiplagiatService.EnqueueDocument(path);
                     }
                     return true;

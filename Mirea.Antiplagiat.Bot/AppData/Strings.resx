@@ -123,6 +123,9 @@
   <data name="AuthorizeAntiplagiatSuccess" xml:space="preserve">
     <value>Авторизация прошла успешно</value>
   </data>
+  <data name="CheckComplete" xml:space="preserve">
+    <value>Ваш отчёт готов!</value>
+  </data>
   <data name="CreatingServiceCollection" xml:space="preserve">
     <value>Регистрация внутренних сервисов</value>
   </data>

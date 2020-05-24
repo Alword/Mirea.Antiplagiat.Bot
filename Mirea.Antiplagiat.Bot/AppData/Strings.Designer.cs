@@ -79,6 +79,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Ваш отчёт готов!.
+        /// </summary>
+        internal static string CheckComplete {
+            get {
+                return ResourceManager.GetString("CheckComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Регистрация внутренних сервисов.
         /// </summary>
         internal static string CreatingServiceCollection {

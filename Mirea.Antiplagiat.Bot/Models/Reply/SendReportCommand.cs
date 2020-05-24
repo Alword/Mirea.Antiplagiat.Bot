@@ -5,10 +5,17 @@ using Mirea.Antiplagiat.Bot.Data;
 using Mirea.Antiplagiat.Bot.Extentions;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Runtime.CompilerServices;
 using System.Text;
 using VkNet.Abstractions;
+using VkNet.Enums;
+using VkNet.Model;
+using VkNet.Model.Attachments;
 using VkNet.Model.GroupUpdate;
+using VkNet.Model.RequestParams;
 
 namespace Mirea.Antiplagiat.Bot.Models.Commands
 {
@@ -19,6 +26,7 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
         private readonly IVkApi vkApi;
         public SendReportCommand(IAntiplagiatService antiplagiatService, IVkApi vkApi, MireaAntiplagiatDataContext context)
         {
+            this.vkApi = vkApi;
             this.context = context;
             this.antiplagiatService = antiplagiatService;
             antiplagiatService.OnDocumentChecked += AntiplagiatService_OnDocumentChecked;
@@ -27,7 +35,24 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
         {
             if (context.PathUserId.ContainsKey(documentPath))
             {
-                vkApi.Reply(context.PathUserId[documentPath], AppData.Strings.ReportIsReady);
+                long userId = context.PathUserId[documentPath];
+
+                var uploadServer = vkApi.Docs.GetMessagesUploadServer(userId);
+
+                using var wc = new WebClient();
+                var result = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, resultPath));
+                var docs = vkApi.Docs.Save(result, title: Path.GetFileName(resultPath), tags: null);
+                vkApi.Messages.Send(new MessagesSendParams()
+                {
+                    RandomId = new Random().Next(),
+                    UserId = userId,
+                    Message = AppData.Strings.CheckComplete,
+                    Attachments = new List<MediaAttachment>
+                        {
+                            docs.First().Instance
+                        },
+
+                });
             }
         }
         ~SendReportCommand()
