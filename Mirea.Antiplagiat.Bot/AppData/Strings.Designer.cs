@@ -97,6 +97,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Документ загружен, ожидайте проверки.
+        /// </summary>
+        internal static string DocumentLoaded {
+            get {
+                return ResourceManager.GetString("DocumentLoaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Документ сохранен.
         /// </summary>
         internal static string DocumentSaved {
@@ -111,6 +120,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         internal static string HelloWorld {
             get {
                 return ResourceManager.GetString("HelloWorld", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Отчет готов.
+        /// </summary>
+        internal static string ReportIsReady {
+            get {
+                return ResourceManager.GetString("ReportIsReady", resourceCulture);
             }
         }
     }

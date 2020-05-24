@@ -5,7 +5,10 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Text;
 using VkNet.Abstractions;
+using VkNet.Enums.SafetyEnums;
 using VkNet.Model;
+using VkNet.Model.GroupUpdate;
+using VkNet.Model.RequestParams;
 
 namespace Mirea.Antiplagiat.Bot.Models.Commands
 {
@@ -13,9 +16,20 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
     {
         public override string Name => "start";
 
-        public override void Execute(Message message, IVkApi client)
+        public override bool Execute(GroupUpdate update, IVkApi client)
         {
-            // client.SendTextMessageAsync(message.Chat.Id, AppData.Strings.HelloWorld);
+            if (update.Type == GroupUpdateType.MessageNew)
+            {
+                Random rnd = new Random();
+                client.Messages.Send(new MessagesSendParams
+                {
+                    RandomId = rnd.Next(),
+                    UserId = update.MessageNew.Message.FromId,
+                    Message = update.MessageNew.Message.Text.ToLower()
+                });
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -129,10 +129,16 @@
   <data name="DicrectoryCreated" xml:space="preserve">
     <value>Создана директория</value>
   </data>
+  <data name="DocumentLoaded" xml:space="preserve">
+    <value>Документ загружен, ожидайте проверки</value>
+  </data>
   <data name="DocumentSaved" xml:space="preserve">
     <value>Документ сохранен</value>
   </data>
   <data name="HelloWorld" xml:space="preserve">
     <value>Привет мир!</value>
+  </data>
+  <data name="ReportIsReady" xml:space="preserve">
+    <value>Отчет готов</value>
   </data>
 </root>

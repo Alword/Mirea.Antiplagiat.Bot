@@ -2,7 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Mirea.Antiplagiat.Bot.Controllers;
+using Mirea.Antiplagiat.Bot.Data;
 using Mirea.Antiplagiat.Bot.Models;
+using Mirea.Antiplagiat.Bot.Models.Commands;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using Serilog;
@@ -90,6 +92,10 @@ namespace Mirea.Antiplagiat.Bot
             Credentials credentials = configuration.GetSection(nameof(credentials)).Get<Credentials>();
             serviceCollection.AddSingleton(credentials);
             serviceCollection.AddSingleton<IAntiplagiatService, AntiplagiatService>();
+
+            // Add app context
+            serviceCollection.AddSingleton<MireaAntiplagiatDataContext>();
+            serviceCollection.AddTransient<SendReportCommand>();
 
             // Add app
             serviceCollection.AddTransient<App>();

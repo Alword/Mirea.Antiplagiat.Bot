@@ -1,11 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Mirea.Antiplagiat.Bot.Abstractions;
 using Mirea.Antiplagiat.Bot.Commands;
 using Mirea.Antiplagiat.Bot.Controllers;
 using Mirea.Antiplagiat.Bot.Models;
 using Mirea.Antiplagiat.Bot.Models.Commands;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using VkNet;
 using VkNet.Abstractions;
@@ -17,9 +19,10 @@ namespace Mirea.Antiplagiat.Bot
     internal class App
     {
 
+        private readonly List<IBackgroundWorker> workers;
+
         private readonly ILogger<App> logger;
         private readonly IVkApi bot;
-        private readonly IConfiguration configuration;
 
         private readonly CheckDocument checkDocument;
         private readonly List<BaseCommand> commands;
@@ -27,17 +30,24 @@ namespace Mirea.Antiplagiat.Bot
 
         public App(ILogger<App> logger,
             IVkApi bot,
-            IConfigurationRoot configuration)
+            IConfigurationRoot configuration,
+            IAntiplagiatService antiplagiatService,
+            SendReportCommand sendReportCommand)
         {
             this.logger = logger;
             this.bot = bot;
-            this.configuration = configuration;
+            this.groupId = configuration.GetSection("ConnectionStrings").GetValue<ulong>("GroupId");
 
-            groupId = configuration.GetSection("ConnectionStrings").GetValue<ulong>("GroupId");
+            workers = new List<IBackgroundWorker>
+            {
+                sendReportCommand
+            };
 
-
-            this.commands = new List<BaseCommand> { new StartCommand() };
-            checkDocument = new CheckDocument();
+            this.commands = new List<BaseCommand>
+            {
+                new CheckDocument(antiplagiatService),
+                new StartCommand()
+            };
         }
         internal Task Run()
         {
@@ -48,25 +58,18 @@ namespace Mirea.Antiplagiat.Bot
                     var s = bot.Groups.GetLongPollServer(groupId);
                     var poll = bot.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams() { Server = s.Server, Ts = s.Ts, Key = s.Key, Wait = 25 });
                     if (poll?.Updates == null) continue;
-                    foreach (var a in poll.Updates)
+
+                    foreach (var update in poll.Updates)
                     {
-                        if (a.Type == GroupUpdateType.MessageNew)
+                        Task.Run(() =>
                         {
-                            SendMessage(a.MessageNew.Message.Text.ToLower(), a.MessageNew.Message.FromId);
-                        }
+                            foreach (var command in commands)
+                            {
+                                if (command.Execute(update, bot)) break;
+                            }
+                        });
                     }
                 }
-            });
-        }
-
-        public void SendMessage(string message, long? userID)
-        {
-            Random rnd = new Random();
-            bot.Messages.Send(new MessagesSendParams
-            {
-                RandomId = rnd.Next(),
-                UserId = userID,
-                Message = message
             });
         }
     }

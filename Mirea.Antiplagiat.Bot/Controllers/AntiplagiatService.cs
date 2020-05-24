@@ -33,12 +33,13 @@ namespace Mirea.Antiplagiat.Bot.Models
         private void Login()
         {
             logger.LogInformation(AppData.Strings.AuthorizeAntiplagiat);
-
             driver.Url = "https://users.antiplagiat.ru/cabinet";
             driver.Navigate();
+
             IWebElement loginButton = driver.FindElement(By.ClassName("enter")).FindElements(By.TagName("a")).FirstOrDefault();
             if (loginButton != null)
             {
+                loginButton.Click();
                 IWebElement emailTextbox = driver.FindElement(By.ClassName("email")).FindElement(By.TagName("input"));
                 IWebElement passwordTextBox = driver.FindElement(By.ClassName("passwd")).FindElement(By.TagName("input"));
                 IWebElement enterButton = driver.FindElement(By.Id("login-button"));
