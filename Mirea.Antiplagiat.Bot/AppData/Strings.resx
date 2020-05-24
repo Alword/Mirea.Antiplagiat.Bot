@@ -117,6 +117,18 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AuthorizeAntiplagiat" xml:space="preserve">
+    <value>Авторизация на сайте антиплагиата</value>
+  </data>
+  <data name="AuthorizeAntiplagiatSuccess" xml:space="preserve">
+    <value>Авторизация прошла успешно</value>
+  </data>
+  <data name="CreatingServiceCollection" xml:space="preserve">
+    <value>Регистрация внутренних сервисов</value>
+  </data>
+  <data name="DicrectoryCreated" xml:space="preserve">
+    <value>Создана директория</value>
+  </data>
   <data name="DocumentSaved" xml:space="preserve">
     <value>Документ сохранен</value>
   </data>

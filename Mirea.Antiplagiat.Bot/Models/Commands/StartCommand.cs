@@ -4,8 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Resources;
 using System.Text;
-using Telegram.Bot;
-using Telegram.Bot.Types;
+using VkNet.Abstractions;
+using VkNet.Model;
 
 namespace Mirea.Antiplagiat.Bot.Models.Commands
 {
@@ -13,9 +13,9 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
     {
         public override string Name => "start";
 
-        public override void Execute(Message message, ITelegramBotClient client)
+        public override void Execute(Message message, IVkApi client)
         {
-            client.SendTextMessageAsync(message.Chat.Id, AppData.Strings.HelloWorld);
+            // client.SendTextMessageAsync(message.Chat.Id, AppData.Strings.HelloWorld);
         }
     }
 }

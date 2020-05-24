@@ -61,6 +61,42 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Авторизация на сайте антиплагиата.
+        /// </summary>
+        internal static string AuthorizeAntiplagiat {
+            get {
+                return ResourceManager.GetString("AuthorizeAntiplagiat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Авторизация прошла успешно.
+        /// </summary>
+        internal static string AuthorizeAntiplagiatSuccess {
+            get {
+                return ResourceManager.GetString("AuthorizeAntiplagiatSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Регистрация внутренних сервисов.
+        /// </summary>
+        internal static string CreatingServiceCollection {
+            get {
+                return ResourceManager.GetString("CreatingServiceCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Создана директория.
+        /// </summary>
+        internal static string DicrectoryCreated {
+            get {
+                return ResourceManager.GetString("DicrectoryCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Документ сохранен.
         /// </summary>
         internal static string DocumentSaved {
