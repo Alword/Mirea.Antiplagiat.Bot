@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using static Mirea.Antiplagiat.Bot.Models.AntiplagiatService;
 
 namespace Mirea.Antiplagiat.Bot.Controllers
@@ -9,5 +10,6 @@ namespace Mirea.Antiplagiat.Bot.Controllers
     {
         public event DocumentCheckedEvent OnDocumentChecked;
         public void EnqueueDocument(string path);
+        public Task Run();
     }
 }

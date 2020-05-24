@@ -35,7 +35,7 @@ namespace Mirea.Antiplagiat.Bot.Models
             this.documentsQueue = new Queue<string>();
             this.checkeding = new List<string>
             {
-                @"C:\Users\Artyom\source\repos\Mirea.Antiplagiat.Bot\Mirea.Antiplagiat.Bot\bin\Debug\netcoreapp3.1\docs\63063164 dbf51013 ИКБО-02-16 Слепушко ПДП.pdf"
+                "7020ef8f"
             };
             ChromeOptions options = new ChromeOptions();
             options.AddUserProfilePreference("download.default_directory", Folders.Repots());
@@ -44,12 +44,11 @@ namespace Mirea.Antiplagiat.Bot.Models
             ChromeDriverService service = ChromeDriverService.CreateDefaultService();
             service.SuppressInitialDiagnosticInformation = true;
             driver = new ChromeDriver(service, options);
-            Login();
         }
 
-        private void Login()
+        public Task Run()
         {
-            Task.Run(async () =>
+            return Task.Run(async () =>
             {
 
                 logger.LogInformation(AppData.Strings.AuthorizeAntiplagiat);
@@ -75,11 +74,15 @@ namespace Mirea.Antiplagiat.Bot.Models
                     if (documentsQueue.Any() && maxIdChecking < 10)
                     {
                         string path = documentsQueue.Dequeue();
-                        UploadDocument(path);
+                        await UploadDocument(path);
                     }
                     if (checkeding.Any())
                     {
                         await CheckStatus();
+                    }
+                    else
+                    {
+                        maxIdChecking = 0;
                     }
                     await Task.Delay(250);
                 }
@@ -103,7 +106,7 @@ namespace Mirea.Antiplagiat.Bot.Models
                 if (dockPath != null)
                 {
                     maxIdChecking = i;
-                    IWebElement checkResult = webElements[i].FindElement(By.ClassName("report-link"));
+                    IWebElement checkResult = webElements[i].FindElements(By.ClassName("report-link")).FirstOrDefault();
                     if (checkResult != null)
                     {
                         string reportPath = await DownloadReport(webElements[i]);
@@ -146,17 +149,21 @@ namespace Mirea.Antiplagiat.Bot.Models
 
             downloadButton.Click();
 
-            while (!d.GetFiles().Select(d => d.FullName).Except(names).Any())
-                await Task.Delay(250);
+            string[] files = new string[0];
+            do
+            {
+                await Task.Delay(5000);
+                files = d.GetFiles().Select(d => d.FullName).Except(names).ToArray();
+            }
+            while (!files.Any() && files.Any(w => w.EndsWith("crdownload")));
 
             driver.SwitchTo().Window(driver.WindowHandles[1]).Close();
-
             driver.SwitchTo().Window(driver.WindowHandles[0]);
 
-            return d.GetFiles().Select(d => d.FullName).Except(names).Single(); ;
+            return d.GetFiles().Select(d => d.FullName).Except(names).Single();
         }
 
-        private void UploadDocument(string path)
+        private async Task UploadDocument(string path)
         {
             checkeding.Add(path);
             IWebElement fileUpload = driver.FindElement(By.Id("fileupload"));
@@ -167,6 +174,8 @@ namespace Mirea.Antiplagiat.Bot.Models
 
             IWebElement continueButton = driver.FindElement(By.Id("file-upload-btn"));
             continueButton.Click();
+
+            await Task.Delay(1000);
 
             driver.Navigate().Refresh();
         }

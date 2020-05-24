@@ -21,6 +21,7 @@ namespace Mirea.Antiplagiat.Bot
     {
 
         private readonly List<IBackgroundWorker> workers;
+        private readonly IAntiplagiatService antiplagiatService;
         private readonly IVkApi bot;
         private readonly List<BaseCommand> commands;
         private readonly ulong groupId;
@@ -34,12 +35,11 @@ namespace Mirea.Antiplagiat.Bot
         {
             this.bot = bot;
             this.groupId = configuration.GetSection("ConnectionStrings").GetValue<ulong>("GroupId");
-
+            this.antiplagiatService = antiplagiatService;
             workers = new List<IBackgroundWorker>
             {
                 sendReportCommand
             };
-            context.PathUserId.Add(@"C:\Users\Artyom\source\repos\Mirea.Antiplagiat.Bot\Mirea.Antiplagiat.Bot\bin\Debug\netcoreapp3.1\docs\63063164 dbf51013 ИКБО-02-16 Слепушко ПДП.pdf", 63063164L);
             this.commands = new List<BaseCommand>
             {
                 new CheckDocument(antiplagiatService,context),
@@ -49,26 +49,25 @@ namespace Mirea.Antiplagiat.Bot
         }
         internal Task Run()
         {
-            return Task.Run(() =>
-            {
-                while (true)
-                {
-                    var s = bot.Groups.GetLongPollServer(groupId);
-                    var poll = bot.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams() { Server = s.Server, Ts = s.Ts, Key = s.Key, Wait = 25 });
-                    if (poll?.Updates == null) continue;
+            var plagiatTask = antiplagiatService.Run();
 
-                    foreach (var update in poll.Updates)
+            while (true)
+            {
+                var s = bot.Groups.GetLongPollServer(groupId);
+                var poll = bot.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams() { Server = s.Server, Ts = s.Ts, Key = s.Key, Wait = 25 });
+                if (poll?.Updates == null) continue;
+
+                foreach (var update in poll.Updates)
+                {
+                    Task.Run(() =>
                     {
-                        Task.Run(() =>
+                        foreach (var command in commands)
                         {
-                            foreach (var command in commands)
-                            {
-                                if (command.Execute(update, bot)) break;
-                            }
-                        });
-                    }
+                            if (command.Execute(update, bot)) break;
+                        }
+                    });
                 }
-            });
+            }
         }
     }
 }

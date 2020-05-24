@@ -39,20 +39,32 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
 
                 var uploadServer = vkApi.Docs.GetMessagesUploadServer(userId);
 
-                using var wc = new WebClient();
-                var result = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, resultPath));
-                var docs = vkApi.Docs.Save(result, title: Path.GetFileName(resultPath), tags: null);
-                vkApi.Messages.Send(new MessagesSendParams()
-                {
-                    RandomId = new Random().Next(),
-                    UserId = userId,
-                    Message = AppData.Strings.CheckComplete,
-                    Attachments = new List<MediaAttachment>
-                        {
-                            docs.First().Instance
-                        },
 
-                });
+                int repeatTime = 10;
+                bool ok = false;
+                while (!ok && repeatTime > 0)
+                {
+                    repeatTime--;
+                    using var wc = new WebClient();
+                    try
+                    {
+                        var result = Encoding.ASCII.GetString(wc.UploadFile(uploadServer.UploadUrl, resultPath));
+                        var docs = vkApi.Docs.Save(result, title: Path.GetFileName(resultPath), tags: null);
+                        vkApi.Messages.Send(new MessagesSendParams()
+                        {
+                            RandomId = new Random().Next(),
+                            UserId = userId,
+                            Message = AppData.Strings.CheckComplete,
+                            Attachments = new List<MediaAttachment> { docs.First().Instance },
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        ok = false;
+                        System.Threading.Thread.Sleep(10000);
+                    }
+                    ok = true;
+                }
             }
         }
         ~SendReportCommand()

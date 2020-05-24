@@ -46,21 +46,22 @@ namespace Mirea.Antiplagiat.Bot
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
 
             // Print connection string to demonstrate configuration object is populated
-            //try
-            //{
-            Log.Information("Starting service");
-            await serviceProvider.GetService<App>().Run();
-            Log.Information("Ending service");
-            //}
-            //catch (Exception ex)
-            //{
-            //Log.Fatal(ex, "Error running service");
-            //throw ex;
-            //}
-            //finally
-            //{
-            //Log.CloseAndFlush();
-            //}
+            try
+            {
+                Log.Information("Starting service");
+                await serviceProvider.GetService<App>().Run();
+                Log.Information("Ending service");
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "Error running service");
+                throw ex;
+            }
+            finally
+            {
+                Console.ReadLine();
+                Log.CloseAndFlush();
+            }
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
