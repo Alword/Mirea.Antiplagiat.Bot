@@ -27,14 +27,14 @@ namespace Mirea.Antiplagiat.Bot.Models
 
         private int maxIdChecking = 0;
         private readonly Queue<string> documentsQueue;
-        private readonly List<string> checkeding;
+        private readonly List<string> checking;
 
         public AntiplagiatService(Credentials credentials, ILogger<AntiplagiatService> logger)
         {
             this.logger = logger;
             this.credentials = credentials;
             this.documentsQueue = new Queue<string>();
-            this.checkeding = new List<string>();
+            this.checking = new List<string>();
 
         }
 
@@ -71,35 +71,51 @@ namespace Mirea.Antiplagiat.Bot.Models
             if (loginButton != null)
             {
                 loginButton.Click();
+                Task.Delay(100).Wait();
                 IWebElement emailTextbox = driver.FindElement(By.ClassName("email")).FindElement(By.TagName("input"));
                 IWebElement passwordTextBox = driver.FindElement(By.ClassName("passwd")).FindElement(By.TagName("input"));
                 IWebElement enterButton = driver.FindElement(By.Id("login-button"));
-
                 emailTextbox.SendKeys(credentials.Login);
+                Task.Delay(100).Wait();
                 passwordTextBox.SendKeys(credentials.Password);
+                Task.Delay(100).Wait();
                 enterButton.Click();
             }
+
+            logger.LogInformation(AppData.Strings.TryAuthorizeAntiplagiat);
+
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
+            wait.Until(ExpectedConditions.ElementIsVisible(By.Id("add-document")));
 
             logger.LogInformation(AppData.Strings.AuthorizeAntiplagiatSuccess);
 
             while (!token.IsCancellationRequested)
             {
-                logger.LogInformation($"{AppData.Strings.Checking} ({documentsQueue.Count}) ({checkeding.Count})");
+                logger.LogInformation($"{AppData.Strings.Checking} ({documentsQueue.Count}) ({checking.Count})");
 
-                if (documentsQueue.Any() && maxIdChecking < 10)
+                while (documentsQueue.Any() && maxIdChecking < 10)
                 {
                     string path = documentsQueue.Peek();
                     logger.LogInformation($"{AppData.Strings.Upload} {path}");
                     UploadDocument(path);
                     documentsQueue.Dequeue();
+                    maxIdChecking++;
                 }
-                if (checkeding.Any())
+                if (checking.Any())
                 {
                     CheckStatus();
+                    if (maxIdChecking < 0)
+                    {
+                        foreach (var x in checking)
+                        {
+                            OnDocumentChecked?.Invoke(this, x, string.Empty);
+                        }
+                        checking.Clear();
+                    }
                 }
                 else
                 {
-                    maxIdChecking = 0;
+                    maxIdChecking = -1;
                 }
                 Task.Delay(1000).Wait();
             }
@@ -108,7 +124,7 @@ namespace Mirea.Antiplagiat.Bot.Models
 
         private void CheckStatus()
         {
-            maxIdChecking = 0;
+            maxIdChecking = -1;
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
             wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("scroll-area")));
             IWebElement scrollPanel = driver.FindElement(By.ClassName("scroll-area"));
@@ -120,7 +136,7 @@ namespace Mirea.Antiplagiat.Bot.Models
             {
                 var data = webElements[i].FindElements(By.TagName("td"));
                 string text = $"{data[1].Text} $ $".Split(' ')[1];
-                var isDocumentInQueue = checkeding.Where(d => d.Contains(text)).FirstOrDefault();
+                var isDocumentInQueue = checking.Where(d => d.Contains(text)).FirstOrDefault();
                 if (isDocumentInQueue != null)
                 {
                     maxIdChecking = Math.Max(maxIdChecking, i);
@@ -137,7 +153,7 @@ namespace Mirea.Antiplagiat.Bot.Models
                     {
                         logger.LogInformation(AppData.Strings.Reply);
                         string reportPath = DownloadReport(webElements[i]);
-                        checkeding.Remove(isDocumentInQueue);
+                        checking.Remove(isDocumentInQueue);
                         OnDocumentChecked?.Invoke(this, isDocumentInQueue, reportPath);
                         driver.Navigate().GoToUrl("https://users.antiplagiat.ru/cabinet");
                         break;
@@ -201,7 +217,7 @@ namespace Mirea.Antiplagiat.Bot.Models
 
         private void UploadDocument(string path)
         {
-            checkeding.Add(path);
+            checking.Add(path);
             IWebElement fileUpload = driver.FindElement(By.Id("fileupload"));
             fileUpload.SendKeys(path);
 

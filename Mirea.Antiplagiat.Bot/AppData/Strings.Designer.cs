@@ -187,6 +187,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на К сожалению закончилась квота, попробуйте позже..
+        /// </summary>
+        internal static string QuotaError {
+            get {
+                return ResourceManager.GetString("QuotaError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Подготовка к перезагрузке приложений.
         /// </summary>
         internal static string Reloading {
@@ -210,6 +219,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         internal static string ReportIsReady {
             get {
                 return ResourceManager.GetString("ReportIsReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Попытка авторизации.
+        /// </summary>
+        internal static string TryAuthorizeAntiplagiat {
+            get {
+                return ResourceManager.GetString("TryAuthorizeAntiplagiat", resourceCulture);
             }
         }
         

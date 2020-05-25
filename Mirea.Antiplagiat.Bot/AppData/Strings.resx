@@ -159,6 +159,9 @@
   <data name="OnCheking" xml:space="preserve">
     <value>Ожидают проверки</value>
   </data>
+  <data name="QuotaError" xml:space="preserve">
+    <value>К сожалению закончилась квота, попробуйте позже.</value>
+  </data>
   <data name="Reloading" xml:space="preserve">
     <value>Подготовка к перезагрузке приложений</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="ReportIsReady" xml:space="preserve">
     <value>Отчет готов</value>
+  </data>
+  <data name="TryAuthorizeAntiplagiat" xml:space="preserve">
+    <value>Попытка авторизации</value>
   </data>
   <data name="Upload" xml:space="preserve">
     <value>Поступил новый документ на проверку</value>
