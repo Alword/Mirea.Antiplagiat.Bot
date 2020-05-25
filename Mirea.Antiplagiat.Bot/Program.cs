@@ -30,38 +30,15 @@ namespace Mirea.Antiplagiat.Bot
                  .Enrich.FromLogContext()
                  .CreateLogger();
 
-            MainAsync(args).GetAwaiter().GetResult();
-            return 0;
-        }
-
-        static async Task MainAsync(string[] args)
-        {
-            // Create service collection
             Log.Information(AppData.Strings.CreatingServiceCollection);
             ServiceCollection serviceCollection = new ServiceCollection();
             ConfigureServices(serviceCollection);
-            ConfigureFolders();
             // Create service provider
             Log.Information("Building service provider");
             IServiceProvider serviceProvider = serviceCollection.BuildServiceProvider();
-
-            // Print connection string to demonstrate configuration object is populated
-            try
-            {
-                Log.Information("Starting service");
-                await serviceProvider.GetService<App>().Run();
-                Log.Information("Ending service");
-            }
-            catch (Exception ex)
-            {
-                Log.Fatal(ex, "Error running service");
-                throw ex;
-            }
-            finally
-            {
-                Console.ReadLine();
-                Log.CloseAndFlush();
-            }
+            serviceProvider.GetService<App>().Run().GetAwaiter().GetResult();
+            //MainAsync(args).GetAwaiter().GetResult();
+            return 0;
         }
 
         private static void ConfigureServices(IServiceCollection serviceCollection)
@@ -100,23 +77,6 @@ namespace Mirea.Antiplagiat.Bot
 
             // Add app
             serviceCollection.AddTransient<App>();
-        }
-
-        private static void ConfigureFolders()
-        {
-            var root = Environment.CurrentDirectory;
-
-            string[] directorys = new string[] { "docs", "reports" };
-
-            foreach (var dir in directorys)
-            {
-                var path = Path.Combine(root, dir);
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-                Log.Information($"{AppData.Strings.DicrectoryCreated} {path}");
-            };
         }
     }
 }

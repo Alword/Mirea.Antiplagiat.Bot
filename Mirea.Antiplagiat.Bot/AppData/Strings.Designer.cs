@@ -88,6 +88,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Документов новых/проверяются.
+        /// </summary>
+        internal static string Checking {
+            get {
+                return ResourceManager.GetString("Checking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Регистрация внутренних сервисов.
         /// </summary>
         internal static string CreatingServiceCollection {
@@ -124,6 +133,33 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Документ успешно скачан!.
+        /// </summary>
+        internal static string Downloaded {
+            get {
+                return ResourceManager.GetString("Downloaded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ожидается загрузка отчета.
+        /// </summary>
+        internal static string Downloading {
+            get {
+                return ResourceManager.GetString("Downloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Экспортирование отчета в пдф.
+        /// </summary>
+        internal static string Exporting {
+            get {
+                return ResourceManager.GetString("Exporting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Привет мир!.
         /// </summary>
         internal static string HelloWorld {
@@ -133,11 +169,47 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Прикрепите докумен, и я отправлю его на сервис антиплагиата, после того как он пройдет проверку я пришлю полный отчет в формате PDF..
+        /// </summary>
+        internal static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ожидают проверки.
+        /// </summary>
+        internal static string OnCheking {
+            get {
+                return ResourceManager.GetString("OnCheking", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Ответ пользователю.
+        /// </summary>
+        internal static string Reply {
+            get {
+                return ResourceManager.GetString("Reply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Отчет готов.
         /// </summary>
         internal static string ReportIsReady {
             get {
                 return ResourceManager.GetString("ReportIsReady", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Поступил новый документ на проверку.
+        /// </summary>
+        internal static string Upload {
+            get {
+                return ResourceManager.GetString("Upload", resourceCulture);
             }
         }
     }

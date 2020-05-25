@@ -31,7 +31,10 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
         }
         public override bool Execute(GroupUpdate update, IVkApi bot)
         {
-            if (update.Type == GroupUpdateType.MessageNew && update.MessageNew.Message.Attachments.Any())
+            if (update.Type == GroupUpdateType.MessageNew &&
+                update.MessageNew != null &&
+                update.MessageNew.Message != null
+                && update.MessageNew.Message.Attachments.Any())
             {
                 var attachment = update.MessageNew.Message.Attachments.First();
                 if (attachment.Type == typeof(Document))
@@ -41,7 +44,7 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
                     using (var client = new WebClient())
                     {
                         string salt = Guid.NewGuid().ToString().Substring(0, 8);
-                        string path = Path.Combine(Folders.Docs(), $"{update.MessageNew.Message.FromId} {salt} {document.Title}");
+                        string path = Path.Combine(Folders.Docs(), $"{update.MessageNew.Message.FromId} {salt} Check.{document.Ext}");
                         client.DownloadFile(document.Uri, path);
                         update.ReplyMessageNew(bot, AppData.Strings.DocumentSaved);
                         context.PathUserId.Add(path, (long)update.MessageNew.Message.FromId);

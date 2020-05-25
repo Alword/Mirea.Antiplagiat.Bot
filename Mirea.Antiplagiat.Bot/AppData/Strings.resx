@@ -126,6 +126,9 @@
   <data name="CheckComplete" xml:space="preserve">
     <value>Ваш отчёт готов!</value>
   </data>
+  <data name="Checking" xml:space="preserve">
+    <value>Документов новых/проверяются</value>
+  </data>
   <data name="CreatingServiceCollection" xml:space="preserve">
     <value>Регистрация внутренних сервисов</value>
   </data>
@@ -138,10 +141,31 @@
   <data name="DocumentSaved" xml:space="preserve">
     <value>Документ сохранен</value>
   </data>
+  <data name="Downloaded" xml:space="preserve">
+    <value>Документ успешно скачан!</value>
+  </data>
+  <data name="Downloading" xml:space="preserve">
+    <value>Ожидается загрузка отчета</value>
+  </data>
+  <data name="Exporting" xml:space="preserve">
+    <value>Экспортирование отчета в пдф</value>
+  </data>
   <data name="HelloWorld" xml:space="preserve">
     <value>Привет мир!</value>
   </data>
+  <data name="Help" xml:space="preserve">
+    <value>Прикрепите докумен, и я отправлю его на сервис антиплагиата, после того как он пройдет проверку я пришлю полный отчет в формате PDF.</value>
+  </data>
+  <data name="OnCheking" xml:space="preserve">
+    <value>Ожидают проверки</value>
+  </data>
+  <data name="Reply" xml:space="preserve">
+    <value>Ответ пользователю</value>
+  </data>
   <data name="ReportIsReady" xml:space="preserve">
     <value>Отчет готов</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Поступил новый документ на проверку</value>
   </data>
 </root>

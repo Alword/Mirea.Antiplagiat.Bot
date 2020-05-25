@@ -25,7 +25,7 @@ namespace Mirea.Antiplagiat.Bot.Models.Commands
                 {
                     RandomId = rnd.Next(),
                     UserId = update.MessageNew.Message.FromId,
-                    Message = update.MessageNew.Message.Text.ToLower()
+                    Message = AppData.Strings.Help
                 });
                 return true;
             }
