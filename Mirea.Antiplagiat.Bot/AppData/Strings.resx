@@ -159,6 +159,9 @@
   <data name="OnCheking" xml:space="preserve">
     <value>Ожидают проверки</value>
   </data>
+  <data name="Reloading" xml:space="preserve">
+    <value>Подготовка к перезагрузке приложений</value>
+  </data>
   <data name="Reply" xml:space="preserve">
     <value>Ответ пользователю</value>
   </data>

@@ -87,6 +87,7 @@ namespace Mirea.Antiplagiat.Bot
                 botTask.Cancel();
                 Log.Error(t.Exception.Message);
                 Log.Error(t.Exception.InnerException.Message);
+                Log.Information(AppData.Strings.Reloading);
             }
         }
 

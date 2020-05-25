@@ -187,6 +187,15 @@ namespace Mirea.Antiplagiat.Bot.AppData {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Подготовка к перезагрузке приложений.
+        /// </summary>
+        internal static string Reloading {
+            get {
+                return ResourceManager.GetString("Reloading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Ответ пользователю.
         /// </summary>
         internal static string Reply {

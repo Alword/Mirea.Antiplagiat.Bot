@@ -41,7 +41,10 @@ namespace Mirea.Antiplagiat.Bot.Models
         private IWebDriver InitDriwer()
         {
             if (driver != null)
+            {
+                driver.Close();
                 driver.Dispose();
+            }
 
             ChromeOptions options = new ChromeOptions();
             options.AddUserProfilePreference("download.default_directory", Folders.Repots());
@@ -58,7 +61,6 @@ namespace Mirea.Antiplagiat.Bot.Models
         public void Run(CancellationToken token)
         {
             driver = InitDriwer();
-
             logger.LogInformation(AppData.Strings.AuthorizeAntiplagiat);
             driver.Url = $"{credentials.Base}/cabinet";
             driver.Navigate();
@@ -86,9 +88,10 @@ namespace Mirea.Antiplagiat.Bot.Models
 
                 if (documentsQueue.Any() && maxIdChecking < 10)
                 {
-                    string path = documentsQueue.Dequeue();
+                    string path = documentsQueue.Peek();
                     logger.LogInformation($"{AppData.Strings.Upload} {path}");
                     UploadDocument(path);
+                    documentsQueue.Dequeue();
                 }
                 if (checkeding.Any())
                 {
@@ -98,14 +101,14 @@ namespace Mirea.Antiplagiat.Bot.Models
                 {
                     maxIdChecking = 0;
                 }
-                Task.Delay(1).Wait();
+                Task.Delay(1000).Wait();
             }
 
         }
 
         private void CheckStatus()
         {
-
+            maxIdChecking = 0;
             var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
             wait.Until(ExpectedConditions.ElementIsVisible(By.ClassName("scroll-area")));
             IWebElement scrollPanel = driver.FindElement(By.ClassName("scroll-area"));
@@ -113,31 +116,29 @@ namespace Mirea.Antiplagiat.Bot.Models
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(60));
             wait.Until(ExpectedConditions.ElementIsVisible(By.TagName("tr")));
             var webElements = scrollPanel.FindElements(By.TagName("tr"));
-
-            for (int i = 0; i < webElements.Count; i++)
+            for (int i = webElements.Count - 1; i >= 0; i--)
             {
                 var data = webElements[i].FindElements(By.TagName("td"));
                 string text = $"{data[1].Text} $ $".Split(' ')[1];
-                var dockPath = checkeding.Where(d => d.Contains(text)).FirstOrDefault();
-                if (dockPath != null)
+                var isDocumentInQueue = checkeding.Where(d => d.Contains(text)).FirstOrDefault();
+                if (isDocumentInQueue != null)
                 {
-                    maxIdChecking = i;
-                    IWebElement checkResult = null;
+                    maxIdChecking = Math.Max(maxIdChecking, i);
+                    IWebElement IsDucumentChecked = null;
                     try
                     {
-                        checkResult = webElements[i].FindElements(By.ClassName("report-link")).FirstOrDefault();
+                        IsDucumentChecked = webElements[i].FindElements(By.ClassName("report-link")).FirstOrDefault();
                     }
                     catch (StaleElementReferenceException ex)
                     {
                         continue;
                     }
-                    if (checkResult != null)
+                    if (IsDucumentChecked != null)
                     {
                         logger.LogInformation(AppData.Strings.Reply);
                         string reportPath = DownloadReport(webElements[i]);
-                        checkeding.Remove(dockPath);
-                        OnDocumentChecked?.Invoke(this, dockPath, reportPath);
-                        maxIdChecking = 10;
+                        checkeding.Remove(isDocumentInQueue);
+                        OnDocumentChecked?.Invoke(this, isDocumentInQueue, reportPath);
                         driver.Navigate().GoToUrl("https://users.antiplagiat.ru/cabinet");
                         break;
                     }
@@ -189,8 +190,8 @@ namespace Mirea.Antiplagiat.Bot.Models
                 if (newFiles.Any())
                     newFile = newFiles.First();
             }
-            while (newFile == null || 
-            newFile.LastAccessTime < lastData  && !newFile.FullName.EndsWith("crdownload"));
+            while (newFile == null ||
+            newFile.LastAccessTime < lastData && !newFile.FullName.EndsWith("crdownload"));
 
             driver.SwitchTo().Window(driver.WindowHandles[1]).Close();
             driver.SwitchTo().Window(driver.WindowHandles[0]);
